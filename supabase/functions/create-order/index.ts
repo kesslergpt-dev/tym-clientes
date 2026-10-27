@@ -7,9 +7,12 @@ const json = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8" },
   });
 
-const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (ch) => ({
-  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
-}[ch]!));
+const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (ch) => {
+  const entities: Record<string, string> = {
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
+  };
+  return entities[ch] ?? ch;
+});
 
 async function sendEmail(order: any, productsText: string) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
