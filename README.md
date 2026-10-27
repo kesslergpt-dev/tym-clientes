@@ -3,7 +3,7 @@
 Tienda pública independiente del sistema de punto de venta. Los clientes no crean cuentas ni inician sesión: agregan productos al carrito, dejan nombre y teléfono y reciben un ticket pendiente de validación. El acceso administrativo está discretamente integrado en el símbolo ✧ de la esquina inferior derecha.
 
 ## Componentes
-- `index.html`: catálogo, carrito, datos de compra, ticket, inicio/cierre de sesión administrativo y editor de productos con recorte de imágenes.
+- `index.html`: catálogo, carrito, datos de compra, ticket, inicio/cierre de sesión administrativo, gestión de productos/categorías y editor de contenido de portada, textos, checkout y URLs de imágenes.
 - `supabase/schema.sql`: tablas, políticas RLS y bucket de imágenes.
 - `supabase/functions/create-order/`: crea tickets pendientes y recalcula los precios desde la base de datos; no confía en los precios enviados por el navegador.
 - `supabase/config.toml`: permite checkout sin cuenta de cliente.
@@ -26,7 +26,7 @@ Tienda pública independiente del sistema de punto de venta. Los clientes no cre
    La función pública valida los datos y precios en el servidor. No requiere login del cliente; la clave de servicio solo se usa dentro del entorno de Supabase.
 7. Publicar `index.html` y `logo-tym.svg` en el hosting elegido.
 
-## Seguridad y estado
+## Despliegue de la función de pedidos desde GitHub\n- El sitio estático se publica desde GitHub mediante Netlify, pero las Edge Functions se despliegan en Supabase por separado.\n- El workflow `.github/workflows/deploy-supabase-function.yml` permite desplegar `create-order` automáticamente cuando cambia su código y manualmente desde GitHub Actions.\n- Para activarlo, crear un token personal de Supabase y guardarlo como secreto `SUPABASE_ACCESS_TOKEN` en Settings → Secrets and variables → Actions del repositorio. Nunca pegar ese token en el código ni en el chat.\n- El proyecto Supabase configurado en el frontend tiene ref `ndtpvvhhbcwosnwevikx`; el identificador de sitio de Netlify no sustituye este project ref.\n\n## Seguridad y estado
 - No hay inicio de sesión para clientes.
 - Los visitantes pueden leer productos activos, pero no consultar pedidos.
 - La creación de tickets solo se realiza mediante la Edge Function.
