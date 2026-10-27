@@ -16,7 +16,7 @@ Tienda pública independiente del sistema de punto de venta. Los clientes no cre
    ```sql
    insert into public.admin_users(user_id) values ('UUID-DEL-ADMINISTRADOR');
    ```
-5. En `index.html`, reemplazar `SUPABASE_URL` y `SUPABASE_ANON_KEY` con la URL y la clave **publishable/anon** del proyecto nuevo. Nunca poner la clave `service_role` en HTML ni compartirla.
+5. La URL y la clave **publishable** que se indicaron para este proyecto ya están configuradas en `index.html`. La URL base debe ser `https://ndtpvvhhbcwosnwevikx.supabase.co` (sin `/rest/v1/`). La clave publishable es apta para frontend siempre que las políticas RLS estén correctamente aplicadas. Nunca poner la clave `service_role` ni claves `sb_secret` en HTML ni en GitHub.
 6. Con Supabase CLI instalada, vincular el proyecto y desplegar la función:
    ```sh
    supabase login
@@ -37,6 +37,9 @@ Tienda pública independiente del sistema de punto de venta. Los clientes no cre
 
 ## Pendiente antes de producción
 - Configurar Supabase y desplegar la función.
-- Elegir cómo querés recibir avisos de pedidos (email o WhatsApp). Por ahora, los tickets aparecerán en el panel de administración; todavía no hay notificaciones externas.
+- Configurar secretos de notificaciones y desplegar la versión actualizada de `create-order`.
+- Email: crear una cuenta de Resend, verificar un dominio/remitente y configurar `RESEND_API_KEY`, `ORDER_EMAIL_TO` y `ORDER_EMAIL_FROM` como secretos de Edge Functions.
+- WhatsApp: activar WhatsApp Business Platform / Cloud API, configurar `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_TO`, `WHATSAPP_TEMPLATE_NAME` y opcionalmente `WHATSAPP_TEMPLATE_LANGUAGE` como secretos. La plantilla aprobada debe tener seis variables de texto, en este orden: ticket, nombre del cliente, teléfono, total, resumen de productos y modalidad.
+- La función registra el pedido antes de enviar avisos; si un proveedor falla, el pedido sigue guardado y el estado del aviso queda en los logs de la función.
 - Probar compra de punta a punta, permisos de administrador y edición/recorte de fotos.
 - Agregar medidas antispam/rate limiting al endpoint público antes de promocionar la tienda.
