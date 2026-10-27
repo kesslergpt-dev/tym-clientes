@@ -24,6 +24,7 @@ create table if not exists public.products (
  image_url text,
  image_path text,
  image_position text not null default '50% 50%',
+ image_fit text not null default 'cover' check(image_fit in ('cover','contain')),
  featured boolean not null default false,
  active boolean not null default true,
  sort_order integer not null default 100,
@@ -56,9 +57,10 @@ create table if not exists public.orders (
 create index if not exists orders_created_idx on public.orders(created_at desc);
 create index if not exists orders_status_idx on public.orders(status,created_at desc);
 alter table public.orders enable row level security;
-grant select,update on public.orders to authenticated;
+grant select,update,delete on public.orders to authenticated;
 create policy "admins read orders" on public.orders for select to authenticated using(public.is_tym_admin());
 create policy "admins update orders" on public.orders for update to authenticated using(public.is_tym_admin()) with check(public.is_tym_admin());
+create policy "admins delete orders" on public.orders for delete to authenticated using(public.is_tym_admin());
 -- No public INSERT or SELECT policies: only the create-order Edge Function may create tickets.
 
 create table if not exists public.site_settings (
