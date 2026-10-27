@@ -24,7 +24,7 @@ async function sendEmail(order: any, productsText: string) {
     <p><strong>WhatsApp/teléfono:</strong> ${escapeHtml(order.customer_phone)}</p>
     <p><strong>Modalidad:</strong> ${escapeHtml(order.fulfillment)}</p>
     <p><strong>Fecha solicitada:</strong> ${escapeHtml(order.needed_date || "A coordinar")}</p>
-    <p><strong>Productos:</strong><br>${productsText.split("\\n").map(escapeHtml).join("<br>")}</p>
+    <p><strong>Productos:</strong><br>${productsText.split("\n").map(escapeHtml).join("<br>")}</p>
     <p><strong>Total calculado:</strong> ${escapeHtml(Number(order.total).toLocaleString("es-AR", { style: "currency", currency: "ARS" }))}</p>
     <p><strong>Comentarios:</strong> ${escapeHtml(order.notes || "Sin comentarios")}</p>
     <p>Estado: Pendiente de validación. Contactá al cliente para confirmar disponibilidad y condiciones.</p>`;
@@ -47,7 +47,7 @@ async function sendEmail(order: any, productsText: string) {
 async function sendWhatsApp(order: any, productsText: string) {
   const token = Deno.env.get("WHATSAPP_ACCESS_TOKEN");
   const phoneId = Deno.env.get("WHATSAPP_PHONE_NUMBER_ID");
-  const to = (Deno.env.get("WHATSAPP_TO") || "").replace(/\\D/g, "");
+  const to = (Deno.env.get("WHATSAPP_TO") || "").replace(/\D/g, "");
   const template = Deno.env.get("WHATSAPP_TEMPLATE_NAME");
   const language = Deno.env.get("WHATSAPP_TEMPLATE_LANGUAGE") || "es_AR";
   if (!token || !phoneId || !to || !template) return { status: "not_configured" };
@@ -98,9 +98,9 @@ Deno.serve(async (req) => {
     const needed_date = body.needed_date ? String(body.needed_date) : null;
     const submitted = body.items;
     if (customer_name.length < 2 || customer_name.length > 100) return json({ error: "Ingresá un nombre válido" }, 400);
-    if (customer_phone.replace(/\\D/g, "").length < 6 || customer_phone.length > 30) return json({ error: "Ingresá un teléfono válido" }, 400);
+    if (customer_phone.replace(/\D/g, "").length < 6 || customer_phone.length > 30) return json({ error: "Ingresá un teléfono válido" }, 400);
     if (notes.length > 500 || !Array.isArray(submitted) || submitted.length < 1 || submitted.length > 40) return json({ error: "El pedido no es válido" }, 400);
-    if (needed_date && !/^\\d{4}-\\d{2}-\\d{2}$/.test(needed_date)) return json({ error: "La fecha no es válida" }, 400);
+    if (needed_date && !/^\d{4}-\d{2}-\d{2}$/.test(needed_date)) return json({ error: "La fecha no es válida" }, 400);
     const normalized = submitted.map((x: any) => ({ product_id: String(x.product_id ?? ""), quantity: Number(x.quantity) }));
     if (normalized.some((x: any) => !/^[0-9a-f-]{36}$/i.test(x.product_id) || !Number.isInteger(x.quantity) || x.quantity < 1 || x.quantity > 50)) return json({ error: "Hay productos o cantidades inválidas" }, 400);
 
@@ -125,7 +125,7 @@ Deno.serve(async (req) => {
     if (error) throw error;
 
     // Las notificaciones son best-effort: un fallo de proveedor nunca descarta un pedido ya guardado.
-    const productsText = items.map((x: any) => `${x.quantity} × ${x.name} — ${Number(x.subtotal).toLocaleString("es-AR", { style: "currency", currency: "ARS" })}`).join("\\n");
+    const productsText = items.map((x: any) => `${x.quantity} × ${x.name} — ${Number(x.subtotal).toLocaleString("es-AR", { style: "currency", currency: "ARS" })}`).join("\n");
     const [emailResult, whatsappResult] = await Promise.allSettled([
       sendEmail(order, productsText),
       sendWhatsApp(order, productsText),
