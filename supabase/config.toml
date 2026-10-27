@@ -1,0 +1,3 @@
+[functions.create-order]
+# Checkout is public: customers do not create accounts. The function validates products and prices server-side.
+verify_jwt = false
