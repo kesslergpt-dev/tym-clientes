@@ -4,15 +4,15 @@ const SUPABASE_URL = "https://ndtpvvhhbcwosnwevikx.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const ASSETS_REPO = process.env.GITHUB_ASSETS_REPO || "kesslergpt-dev/tym-dulce-assets";
-const ALLOWED_ORIGIN = process.env.SITE_ORIGIN || "https://tym-dulce.netlify.app";
+const ALLOWED_ORIGINS = (process.env.SITE_ORIGIN || "https://tymdulce.netlify.app").split(",").map(s => s.trim()).filter(Boolean);
 const MAX_BYTES = 3_700_000;
 
-function response(statusCode, body) {
+let requestOrigin = "https://tymdulce.netlify.app";\nfunction response(statusCode, body) {
   return {
     statusCode,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
+      "Access-Control-Allow-Origin": requestOrigin,
       "Access-Control-Allow-Headers": "authorization, content-type",
       "Access-Control-Allow-Methods": "POST, OPTIONS",
       "Vary": "Origin",
@@ -30,7 +30,7 @@ export async function handler(event) {
   }
 
   const origin = event.headers.origin || event.headers.Origin;
-  if (origin && origin !== ALLOWED_ORIGIN) return response(403, { error: "Origen no autorizado." });
+  if (origin && !ALLOWED_ORIGINS.includes(origin)) return response(403, { error: "Origen no autorizado." });
 
   const authHeader = event.headers.authorization || event.headers.Authorization || "";
   const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
