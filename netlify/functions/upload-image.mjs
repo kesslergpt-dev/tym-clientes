@@ -7,7 +7,8 @@ const ASSETS_REPO = process.env.GITHUB_ASSETS_REPO || "kesslergpt-dev/tym-dulce-
 const ALLOWED_ORIGINS = (process.env.SITE_ORIGIN || "https://tymdulce.netlify.app").split(",").map(s => s.trim()).filter(Boolean);
 const MAX_BYTES = 3_700_000;
 
-let requestOrigin = "https://tymdulce.netlify.app";\nfunction response(statusCode, body) {
+let requestOrigin = "https://tymdulce.netlify.app";
+function response(statusCode, body) {
   return {
     statusCode,
     headers: {
