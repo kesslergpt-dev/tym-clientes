@@ -4,11 +4,10 @@ const SUPABASE_URL = "https://ndtpvvhhbcwosnwevikx.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const ASSETS_REPO = process.env.GITHUB_ASSETS_REPO || "kesslergpt-dev/tym-dulce-assets";
-const ALLOWED_ORIGINS = (process.env.SITE_ORIGIN || "https://tymdulce.netlify.app").split(",").map(s => s.trim()).filter(Boolean);
+const ALLOWED_ORIGINS = (process.env.SITE_ORIGIN || "https://tym-dulce.netlify.app").split(",").map(s => s.trim().replace(/\\/$/, "")).filter(Boolean);
 const MAX_BYTES = 3_700_000;
 
-let requestOrigin = "https://tymdulce.netlify.app";
-function response(statusCode, body) {
+function response(statusCode, body, requestOrigin = ALLOWED_ORIGINS[0] || "null") {
   return {
     statusCode,
     headers: {
@@ -24,14 +23,15 @@ function response(statusCode, body) {
 }
 
 export async function handler(event) {
-  if (event.httpMethod === "OPTIONS") return response(204, {});
-  if (event.httpMethod !== "POST") return response(405, { error: "Método no permitido." });
+  const origin = event.headers.origin || event.headers.Origin || "";
+  const responseOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : (ALLOWED_ORIGINS[0] || "null");
+  if (origin && !ALLOWED_ORIGINS.includes(origin)) return response(403, { error: "Origen no autorizado." }, responseOrigin);
+  if (event.httpMethod === "OPTIONS") return response(204, {}, responseOrigin);
+  if (event.httpMethod !== "POST") return response(405, { error: "Método no permitido." }, responseOrigin);
   if (!SUPABASE_ANON_KEY || !GITHUB_TOKEN) {
     return response(503, { error: "Falta configurar GITHUB_TOKEN y SUPABASE_ANON_KEY en las variables de Netlify." });
   }
 
-  const origin = event.headers.origin || event.headers.Origin;
-  if (origin && !ALLOWED_ORIGINS.includes(origin)) return response(403, { error: "Origen no autorizado." });
 
   const authHeader = event.headers.authorization || event.headers.Authorization || "";
   const jwt = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
