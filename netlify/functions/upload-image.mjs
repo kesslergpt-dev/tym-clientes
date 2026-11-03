@@ -4,7 +4,7 @@ const SUPABASE_URL = "https://ndtpvvhhbcwosnwevikx.supabase.co";
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const ASSETS_REPO = process.env.GITHUB_ASSETS_REPO || "kesslergpt-dev/tym-dulce-assets";
-const ALLOWED_ORIGINS = (process.env.SITE_ORIGIN || "https://tym-dulce.netlify.app").split(",").map(s => s.trim().replace(/\/+$/, "")).filter(Boolean);
+const ALLOWED_ORIGINS = (process.env.SITE_ORIGIN || "").split(",").map(s => s.trim().replace(/\/+$/, "")).filter(Boolean);
 const MAX_BYTES = 3_700_000;
 
 function response(statusCode, body, requestOrigin = ALLOWED_ORIGINS[0] || "null") {
