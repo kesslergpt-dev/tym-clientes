@@ -9,13 +9,14 @@ En el sitio que publica `tym-clientes`, abrir **Site configuration → Environme
 - `GITHUB_TOKEN`: token de GitHub con acceso de escritura **solo** al repositorio `kesslergpt-dev/tym-dulce-assets`. Para un fine-grained personal access token, seleccionar ese repositorio y permiso **Contents: Read and write**. No pegar este token en el HTML ni compartirlo.
 - `GITHUB_ASSETS_REPO`: `kesslergpt-dev/tym-dulce-assets`
 - `SUPABASE_ANON_KEY`: la clave publicable que ya usa el sitio (la que comienza con `sb_publishable_`). No usar una clave `service_role` ni una clave secreta.
-- `SITE_ORIGIN`: `https://tymdulce.netlify.app` (si el dominio publicado en Netlify es otro, usar el dominio exacto; se permiten varios separados por comas).
+- `SITE_ORIGIN`: `https://tym-dulce.netlify.app` (usar el origen exacto del sitio publicado, sin barra final; se permiten varios separados por comas).
 
 Después de guardar las variables, ejecutar **Trigger deploy → Deploy site** para que la función las reciba.
 
 ## Cómo funciona
 
 - Las subidas de foto principal, galería ilustrativa y carrusel del encabezado se convierten a WebP y se optimizan antes de enviarse.
+- Las imágenes de productos, galerías, portada, historia y logo que aún apunten al bucket público `product-images` pueden migrarse desde Administración → Fotos.
 - La función verifica la sesión de Supabase y la pertenencia a `admin_users` antes de escribir en GitHub.
 - El token de GitHub permanece del lado del servidor.
 - El límite de archivo optimizado para cada subida es de 3,7 MB.
