@@ -14,6 +14,7 @@ const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (
   return entities[ch] ?? ch;
 });
 
+// Notificaciones de pedidos: destinatarios de TyM Dulce definidos abajo.
 async function sendEmail(order: any, productsText: string) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   const to = ["tomask1913@gmail.com", "martu6016@gmail.com"];
