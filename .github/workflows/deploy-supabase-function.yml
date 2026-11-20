@@ -29,4 +29,4 @@ jobs:
             echo "::error::Add the SUPABASE_ACCESS_TOKEN secret in GitHub repository settings."
             exit 1
           fi
-          supabase functions deploy create-order --project-ref ndtpvvhhbcwosnwevikx
+          supabase functions deploy create-order --project-ref ndtpvvhhbcwosnwevikx --yes
