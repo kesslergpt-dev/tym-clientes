@@ -16,9 +16,9 @@ const escapeHtml = (value: unknown) => String(value ?? "").replace(/[&<>"']/g, (
 
 async function sendEmail(order: any, productsText: string) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
-  const to = Deno.env.get("ORDER_EMAIL_TO");
+  const to = ["tomask1913@gmail.com", "martu6016@gmail.com"];
   const from = Deno.env.get("ORDER_EMAIL_FROM");
-  if (!apiKey || !to || !from) return { status: "not_configured" };
+  if (!apiKey || !from) return { status: "not_configured" };
 
   const html = `
     <h2>Nueva solicitud de compra · TyM Dulce</h2>
@@ -35,7 +35,7 @@ async function sendEmail(order: any, productsText: string) {
     method: "POST",
     headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from, to: [to],
+      from, to,
       subject: `Nuevo pedido ${order.ticket_code} · TyM Dulce`,
       html,
     }),
